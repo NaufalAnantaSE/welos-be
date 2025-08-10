@@ -1,9 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { config } from 'dotenv'; // 1. Impor 'config'
+import { config } from 'dotenv'; 
 import { ValidationPipe } from '@nestjs/common';
 
-// 2. Panggil config() di sini, SEBELUM hal lain terjadi
 config();
 
 async function bootstrap() {
