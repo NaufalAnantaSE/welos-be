@@ -1,6 +1,8 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { KendaraanService } from './kendaraan.service';
 import { CreateKendaraanDto } from './dto/create-kendaraan.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { KendaraanEntity } from './entities/kendaraan.entity';
 
 @Controller('kendaraan')
 export class KendaraanController {
@@ -8,14 +10,24 @@ export class KendaraanController {
         private readonly kendaraanService: KendaraanService
     ) { }
 
-    @Post('create-kendaraan')
+    // 1. Tambahkan decorator @Post() untuk mendefinisikan endpoint
+    @Post()
+    // 2. Gunakan HttpCode untuk response status yang sesuai (201 Created)
     @HttpCode(HttpStatus.CREATED)
-    async createKendaraan(@Body() createKendaraanDto: CreateKendaraanDto): Promise<any> {
-        return this.kendaraanService.CreateKendaraan(createKendaraanDto);
+    @UseInterceptors(FileInterceptor('image')) // 'image' adalah nama field di form-data
+    async create(
+        // 3. Tambahkan validasi untuk file jika diperlukan (lihat catatan)
+        @UploadedFile() file: Express.Multer.File,
+        @Body() createKendaraanDto: CreateKendaraanDto,
+    ): Promise<KendaraanEntity> {
+        // 4. Panggil method 'create' yang benar dari service
+        return this.kendaraanService.CreateKendaraanDto(createKendaraanDto, file);
     }
 
-    @Get('get-all-kendaraan')
-    async getAllKendaraan(): Promise<any> {
-        return await this.kendaraanService.GetAllKendaraan();
+    // 5. Gunakan @Get() tanpa path tambahan untuk endpoint "get all"
+    @Get()
+    async findAll(): Promise<KendaraanEntity[]> {
+        // Panggil method 'findAll' yang sesuai dari service
+        return this.kendaraanService.findAll();
     }
 }

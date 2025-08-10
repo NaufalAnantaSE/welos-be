@@ -24,8 +24,7 @@ export class CreateKendaraanDto {
     @IsEnum(KendaraanFeature, { each: true })
     fitur: KendaraanFeature[];
 
-    @IsUrl()
-    imageUrl: string;
+
 
     @IsBoolean()
     IsHighlighted: boolean;
